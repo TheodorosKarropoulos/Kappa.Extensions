@@ -1,3 +1,5 @@
+using System.Linq;
+
 using Xunit;
 
 namespace Kappa.Extensions.UnitTests
@@ -37,6 +39,15 @@ namespace Kappa.Extensions.UnitTests
         public void IsNullOrWhiteSpace_Return_False(string str)
         {
             Assert.False(str.IsNullOrWhiteSpace());
+        }
+
+        [Theory]
+        [InlineData("sdfsdf123123")]
+        [InlineData("23423423")]
+        [InlineData("423 sfsd 34")]
+        public void GetNumbers_Return_Numbers_Of_String(string str)
+        {
+            Assert.True(str.GetNumbers().All(x => char.IsDigit(x)));
         }
     }
 }

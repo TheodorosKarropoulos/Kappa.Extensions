@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Company>Kappa</Company>
+    <Product>Extensions</Product>
+    <PackageProjectUrl>https://github.com/TheodorosKarropoulos/Kappa.Extensions</PackageProjectUrl>
   </PropertyGroup>
 
 </Project>
