@@ -106,7 +106,7 @@ namespace Kappa.Extensions.UnitTests
             source.NotContainNumbers().Should().BeFalse();
         }
 
-         [Theory]
+        [Theory]
         [InlineData("  ksjdfhlask ")]
         [InlineData("fjashlkfj asfkjsah fk")]
         [InlineData("djgfhsdjkgkdf")]
