@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Xunit;
 using FluentAssertions;
+using System.Linq;
 
 namespace Kappa.Extensions.UnitTests
 {
@@ -28,6 +29,40 @@ namespace Kappa.Extensions.UnitTests
             IEnumerable<string> enumerable = null;
 
             enumerable.NullOrEmpty().Should().BeTrue();
+        }
+
+        [Fact]
+        public void ToSafeDictionaryOrDefault_Should_Remove_Duplicate_Keys()
+        {
+            var dict = new List<object>
+            {
+                new { Key = 1, Value = "One" },
+                new { Key = 1, Value = "One" },
+                new { Key = 2, Value = "Two" },
+                new { Key = 3, Value = "Three" },
+                new { Key = 3, Value = "Three" },
+                new { Key = 4, Value = "Four" },
+                new { Key = 5, Value = "Five" },
+                new { Key = 5, Value = "Five" }
+            };
+
+            var safeDict = dict.ToSafeDictionaryOrDefault(x => x, y => y);
+            var douplicates = safeDict.GroupBy(x => x).Where(x => x.Count() > 1).ToList();
+
+            Assert.True(douplicates.NullOrEmpty());
+        }
+
+        [Fact]
+        public void ToSafeDictionaryOrDefault_Should_Return_Empty_Dictionary()
+        {
+            var dict = new List<object>
+            {
+                
+            };
+
+            var safeDict = dict.ToSafeDictionaryOrDefault(x => x, y => y);
+
+            Assert.True(safeDict.NullOrEmpty());
         }
     }
 }
