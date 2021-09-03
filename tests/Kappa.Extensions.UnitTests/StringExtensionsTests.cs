@@ -3,11 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 using FluentAssertions;
+using AutoFixture;
 
 namespace Kappa.Extensions.UnitTests
 {
     public class StringExtensionsTests
     {
+        private readonly Fixture fixture;
+
+        public StringExtensionsTests()
+        {
+            fixture = new Fixture();
+        }
+
         [Theory]
         [InlineData(null)]
         [InlineData("")]
@@ -115,5 +123,75 @@ namespace Kappa.Extensions.UnitTests
         {
             source.NotContainNumbers().Should().BeTrue();
         }
+
+        [Fact]
+        public void ShouldReturnTrueWhenTryingToDeserialize()
+        {
+            var person = fixture.Create<Person>();
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(person);
+
+            var tryDesirialize = json.TryDeserialize<Person>(out var _person);
+
+            tryDesirialize.Should().BeTrue();
+        }
+
+        [Fact]
+        public void ShouldFailedOnTryingToDeserializeToWrongObject()
+        {
+            var car = fixture.Create<Car>();
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(car);
+
+            var tryDesirialize = json.TryDeserialize<Person>(out var _car);
+
+            tryDesirialize.Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("    ")]
+        [InlineData("some text")]
+        public void ShouldFailedOnTryingToDeserializeFromPlainString(string str)
+        {
+            var tryDesirialize = str.TryDeserialize<Person>(out var _car);
+
+            tryDesirialize.Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData("password", 3, '*', "pas*****")]
+        [InlineData("password", 0, '*', "********")]
+        public void ShouldMaskString(string source, int skippedChars, char maskChar, string expected)
+        {
+            var maskedString = source.Mask(skippedChars, maskChar);
+            maskedString.Should().Be(expected);
+        }
+
+
+        [Theory]
+        [InlineData(null, 4, '%', null)]
+        [InlineData("", 4, '%', null)]
+        [InlineData("   ", 4, '%', null)]
+        [InlineData("test", 10, '%', "test")]
+        [InlineData("test", -10, '%', "test")]
+        public void ShouldNotMaskString(string source, int skippedCharsNumber, char maskWith, string expected)
+        {
+            var maskedString = source.Mask(skippedCharsNumber, maskWith);
+            maskedString.Should().Be(expected);
+        }
+    }
+
+    internal class Person
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public byte Age { get; set; }
+    }
+
+    internal class Car
+    {
+        public byte NumberOfDoors { get; set; }
+        public string Model { get; set; }
+        public int Year { get; set; }
+        public string Color { get; set; }
     }
 }
