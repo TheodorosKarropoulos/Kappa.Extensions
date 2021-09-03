@@ -43,6 +43,15 @@ namespace Kappa.Extensions.UnitTests
         }
 
         [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public void IsNullOrWhIsNullOrEmptyOrWhiteSpace_Return_True(string source)
+        {
+            Assert.True(source.IsNullOrEmptyOrWhiteSpace());
+        }
+
+        [Theory]
         [InlineData("hfksdhf 23487239")]
         [InlineData("2834792384")]
         [InlineData("  adfhskdj ")]
